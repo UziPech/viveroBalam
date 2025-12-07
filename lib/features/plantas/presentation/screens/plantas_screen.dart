@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import '../../../../core/theme/app_design.dart';
 import '../../../../core/services/image_service.dart';
+import '../../../../core/widgets/animated_search_bar.dart';
 import '../../domain/entities/planta.dart';
 import '../providers/planta_provider.dart';
 import '../widgets/planta_card.dart';
@@ -22,6 +23,9 @@ class _PlantasScreenState extends ConsumerState<PlantasScreen>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
+
+  // Estado de búsqueda
+  String _searchQuery = '';
 
   /// Abre el formulario de nueva planta
   void _showAddPlantaModal() {
@@ -60,19 +64,30 @@ class _PlantasScreenState extends ConsumerState<PlantasScreen>
               padding: const EdgeInsets.all(AppDesign.screenPadding),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("🌿 Catálogo", style: AppDesign.title1),
-                      const Gap(AppDesign.space4),
-                      Text(
-                        "Vivero de Plantas",
-                        style: AppDesign.caption,
-                      ),
-                    ],
+                  // Título (se oculta cuando el buscador está expandido)
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("🌿 Catálogo", style: AppDesign.title1),
+                        const Gap(AppDesign.space4),
+                        Text(
+                          "Vivero de Plantas",
+                          style: AppDesign.caption,
+                        ),
+                      ],
+                    ),
                   ),
-                  _buildSearchButton(),
+                  // Buscador animado
+                  AnimatedSearchBar(
+                    onSearch: (query) {
+                      setState(() => _searchQuery = query);
+                    },
+                    hintText: 'Buscar planta...',
+                    expandedWidth: MediaQuery.of(context).size.width - 40,
+                  ),
                 ],
               ),
             ),
@@ -82,7 +97,17 @@ class _PlantasScreenState extends ConsumerState<PlantasScreen>
               child: plantasAsync.when(
                 data: (plantas) {
                   if (plantas.isEmpty) return _buildEmptyState();
-                  return _buildPlantasList(plantas);
+                  // Filtrar plantas según búsqueda
+                  final filtered = _searchQuery.isEmpty
+                      ? plantas
+                      : plantas.where((p) =>
+                          p.nombre.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                          p.categoria.toLowerCase().contains(_searchQuery.toLowerCase())
+                        ).toList();
+                  if (filtered.isEmpty && _searchQuery.isNotEmpty) {
+                    return _buildNoResults();
+                  }
+                  return _buildPlantasList(filtered);
                 },
                 loading: () => const Center(
                   child: CircularProgressIndicator(color: AppDesign.gray900),
@@ -103,23 +128,26 @@ class _PlantasScreenState extends ConsumerState<PlantasScreen>
     );
   }
 
-  /// Botón de búsqueda en el header
-  Widget _buildSearchButton() {
-    return GestureDetector(
-      onTap: () {
-        // TODO: Implementar búsqueda
-      },
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: AppDesign.surface,
-          borderRadius: BorderRadius.circular(AppDesign.radiusSmall),
-          boxShadow: AppDesign.shadowSmall,
-        ),
-        child: const Icon(Icons.search_rounded, color: AppDesign.gray900, size: 22),
+  /// Cuando no hay resultados de búsqueda
+  Widget _buildNoResults() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off_rounded, size: 64, color: AppDesign.gray300),
+          const Gap(AppDesign.space16),
+          Text(
+            'No se encontraron plantas',
+            style: AppDesign.title3,
+          ),
+          const Gap(AppDesign.space8),
+          Text(
+            'Intenta con otro término de búsqueda',
+            style: AppDesign.caption,
+          ),
+        ],
       ),
-    );
+    ).animate().fadeIn();
   }
 
   /// Lista de plantas con estadísticas
