@@ -5,6 +5,7 @@ import '../../../plantas/presentation/screens/config_screen.dart';
 import '../../../artesanias/presentation/screens/artesanias_screen.dart';
 import '../../../sustratos/presentation/screens/sustratos_screen.dart';
 import '../../../../core/theme/app_design.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -119,16 +120,35 @@ class _MainLayoutState extends State<MainLayout> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppDesign.radiusPill),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
         child: Container(
           height: 64,
           padding: const EdgeInsets.symmetric(horizontal: AppDesign.space8),
           decoration: BoxDecoration(
-            color: Colors.white.withAlpha(230),
+            // Fondo Liquid Glass
+            color: AppColors.liquidGlassBackground,
             borderRadius: BorderRadius.circular(AppDesign.radiusPill),
-            border: Border.all(color: Colors.white.withAlpha(150), width: 1.5),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withAlpha(15), blurRadius: 30, offset: const Offset(0, 10)),
+            // Borde brillante
+            border: Border.all(
+              color: AppColors.liquidGlassBorder,
+              width: 1.5,
+            ),
+            // Gradiente sutil
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.fromRGBO(255, 255, 255, 0.3),
+                Color.fromRGBO(255, 255, 255, 0.1),
+              ],
+            ),
+            // Sombra premium
+            boxShadow: const [
+              BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.12),
+                blurRadius: 30,
+                offset: Offset(0, 10),
+              ),
             ],
           ),
           child: Row(

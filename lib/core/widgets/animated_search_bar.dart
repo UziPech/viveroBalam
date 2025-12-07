@@ -1,21 +1,22 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../theme/app_design.dart';
+import '../theme/app_colors.dart';
 
-/// Buscador expansible animado estilo iOS con Glassmorphism
+/// Buscador expansible animado con efecto Liquid Glass
 /// Se expande de un círculo con lupa a una barra de búsqueda completa
 class AnimatedSearchBar extends StatefulWidget {
   final Function(String) onSearch;
   final String hintText;
   final double expandedWidth;
-  final double collapsedWidth;
+  final double collapsedSize;
 
   const AnimatedSearchBar({
     super.key,
     required this.onSearch,
     this.hintText = 'Buscar...',
     this.expandedWidth = 280,
-    this.collapsedWidth = 50,
+    this.collapsedSize = 56,
   });
 
   @override
@@ -63,6 +64,7 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
   }
 
   void _onSearchChanged(String value) {
+    setState(() {}); // Rebuild para mostrar/ocultar botón limpiar
     widget.onSearch(value);
   }
 
@@ -70,6 +72,7 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
     _controller.clear();
     widget.onSearch('');
     _focusNode.requestFocus();
+    setState(() {});
   }
 
   @override
@@ -77,50 +80,45 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 350),
       curve: Curves.easeInOut,
-      width: _isExpanded ? widget.expandedWidth : widget.collapsedWidth,
-      height: 50,
+      width: _isExpanded ? widget.expandedWidth : widget.collapsedSize,
+      height: widget.collapsedSize,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(widget.collapsedSize / 2),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 350),
-            curve: Curves.easeInOut,
+          // Más blur cuando está expandido para efecto más premium
+          filter: ImageFilter.blur(
+            sigmaX: _isExpanded ? 25 : 15, 
+            sigmaY: _isExpanded ? 25 : 15,
+          ),
+          child: Container(
             decoration: BoxDecoration(
-              // Fondo glassmorphism - blanco semi-transparente
+              // Fondo Liquid Glass
+              color: AppColors.liquidGlassBackground,
+              borderRadius: BorderRadius.circular(widget.collapsedSize / 2),
+              // Borde brillante
+              border: Border.all(
+                color: AppColors.liquidGlassBorder,
+                width: 1.5,
+              ),
+              // Gradiente más visible cuando expandido
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withAlpha(_isExpanded ? 230 : 200),
-                  Colors.white.withAlpha(_isExpanded ? 200 : 180),
+                  Color.fromRGBO(255, 255, 255, _isExpanded ? 0.4 : 0.3),
+                  Color.fromRGBO(255, 255, 255, _isExpanded ? 0.15 : 0.1),
                 ],
               ),
-              borderRadius: BorderRadius.circular(25),
-              // Borde brillante premium
-              border: Border.all(
-                color: Colors.white.withAlpha(_isExpanded ? 180 : 120),
-                width: 1.5,
-              ),
-              // Sombra suave
+              // Sombra premium
               boxShadow: [
                 BoxShadow(
-                  color: AppDesign.gray900.withAlpha(_isExpanded ? 20 : 10),
+                  color: const Color.fromRGBO(0, 0, 0, 0.12),
                   blurRadius: _isExpanded ? 30 : 15,
                   offset: const Offset(0, 8),
-                  spreadRadius: 0,
-                ),
-                // Sombra interior para profundidad
-                BoxShadow(
-                  color: Colors.white.withAlpha(80),
-                  blurRadius: 1,
-                  offset: const Offset(0, -1),
-                  spreadRadius: 0,
                 ),
               ],
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 // TextField (solo visible cuando está expandido)
                 if (_isExpanded)
@@ -152,32 +150,23 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
                   GestureDetector(
                     onTap: _clearSearch,
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       child: Icon(
                         Icons.close_rounded,
                         color: AppDesign.gray500,
-                        size: 18,
+                        size: 20,
                       ),
                     ),
                   ),
 
-                // Botón de búsqueda/lupa con efecto glass
+                // Botón de búsqueda/lupa
                 GestureDetector(
                   onTap: _toggleSearch,
                   child: Container(
-                    width: 50,
-                    height: 50,
+                    width: widget.collapsedSize - 3,
+                    height: widget.collapsedSize - 3,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25),
-                      // Efecto de hover/presionado
-                      gradient: _isExpanded ? null : LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.white.withAlpha(60),
-                          Colors.white.withAlpha(20),
-                        ],
-                      ),
+                      borderRadius: BorderRadius.circular(widget.collapsedSize / 2),
                     ),
                     child: Center(
                       child: AnimatedSwitcher(
@@ -186,7 +175,7 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
                           _isExpanded ? Icons.close_rounded : Icons.search_rounded,
                           key: ValueKey(_isExpanded),
                           color: AppDesign.gray700,
-                          size: 22,
+                          size: 24,
                         ),
                       ),
                     ),
@@ -200,4 +189,3 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
     );
   }
 }
-

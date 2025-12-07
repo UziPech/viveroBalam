@@ -63,7 +63,8 @@ class _PlantasScreenState extends ConsumerState<PlantasScreen>
             Padding(
               padding: const EdgeInsets.all(AppDesign.screenPadding),
               child: SizedBox(
-                height: 60,
+                width: double.infinity,
+                height: 75,
                 child: Stack(
                   children: [
                     // Título
@@ -88,6 +89,7 @@ class _PlantasScreenState extends ConsumerState<PlantasScreen>
                         },
                         hintText: 'Buscar planta...',
                         expandedWidth: MediaQuery.of(context).size.width - 40,
+                        collapsedSize: 56,
                       ),
                     ),
                   ],
