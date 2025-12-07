@@ -72,7 +72,10 @@ class _ArtesaniasScreenState extends ConsumerState<ArtesaniasScreen>
           ],
         ),
       ),
-      floatingActionButton: _buildFAB(),
+      floatingActionButton: artesaniasAsync.maybeWhen(
+        data: (items) => items.isNotEmpty ? _buildFAB() : null,
+        orElse: () => null,
+      ),
     );
   }
 
@@ -144,7 +147,27 @@ class _ArtesaniasScreenState extends ConsumerState<ArtesaniasScreen>
           const Gap(AppDesign.space24),
           const Text("Sin artesanías", style: AppDesign.title3),
           const Gap(AppDesign.space8),
-          Text("Agrega tu primera artesanía", style: AppDesign.caption),
+          Text("Agrega tu primera artesanía", textAlign: TextAlign.center, style: AppDesign.caption),
+          const Gap(AppDesign.space32),
+          GestureDetector(
+            onTap: _showAddModal,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppDesign.space24, vertical: AppDesign.space16),
+              decoration: BoxDecoration(
+                color: AppDesign.gray900,
+                borderRadius: BorderRadius.circular(AppDesign.radiusMedium),
+                boxShadow: AppDesign.shadowMedium,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.add_rounded, color: Colors.white, size: 22),
+                  const Gap(AppDesign.space8),
+                  Text("Agregar Artesanía", style: AppDesign.bodyBold.copyWith(color: Colors.white)),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     ).animate().fadeIn();

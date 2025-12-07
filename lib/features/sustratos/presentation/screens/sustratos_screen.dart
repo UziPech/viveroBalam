@@ -72,7 +72,10 @@ class _SustratosScreenState extends ConsumerState<SustratosScreen>
           ],
         ),
       ),
-      floatingActionButton: _buildFAB(),
+      floatingActionButton: sustratosAsync.maybeWhen(
+        data: (items) => items.isNotEmpty ? _buildFAB() : null,
+        orElse: () => null,
+      ),
     );
   }
 
@@ -145,7 +148,27 @@ class _SustratosScreenState extends ConsumerState<SustratosScreen>
           const Gap(AppDesign.space24),
           const Text("Sin sustratos", style: AppDesign.title3),
           const Gap(AppDesign.space8),
-          Text("Agrega tu primer sustrato", style: AppDesign.caption),
+          Text("Agrega tu primer sustrato", textAlign: TextAlign.center, style: AppDesign.caption),
+          const Gap(AppDesign.space32),
+          GestureDetector(
+            onTap: _showAddModal,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppDesign.space24, vertical: AppDesign.space16),
+              decoration: BoxDecoration(
+                color: AppDesign.gray900,
+                borderRadius: BorderRadius.circular(AppDesign.radiusMedium),
+                boxShadow: AppDesign.shadowMedium,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.add_rounded, color: Colors.white, size: 22),
+                  const Gap(AppDesign.space8),
+                  Text("Agregar Sustrato", style: AppDesign.bodyBold.copyWith(color: Colors.white)),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     ).animate().fadeIn();

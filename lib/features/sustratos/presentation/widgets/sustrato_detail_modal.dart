@@ -51,7 +51,7 @@ class SustratoDetailModal extends StatelessWidget {
                   const Gap(AppDesign.space16),
                   _buildInfoRow("💰 Precio", '\$${sustrato.precio.toStringAsFixed(2)}'),
                   const Gap(AppDesign.space12),
-                  _buildInfoRow("${sustrato.stockEmoji} Stock", '${sustrato.cantidad} unidades'),
+                  _buildStockRow(),
                   if (sustrato.descripcion.isNotEmpty) ...[
                     const Gap(AppDesign.space16),
                     const Text("Descripción", style: AppDesign.bodyBold),
@@ -98,6 +98,42 @@ class SustratoDetailModal extends StatelessWidget {
       padding: const EdgeInsets.all(AppDesign.space16),
       decoration: BoxDecoration(color: AppDesign.gray50, borderRadius: BorderRadius.circular(AppDesign.radiusMedium)),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(label, style: AppDesign.footnote), Text(value, style: AppDesign.bodyBold)]),
+    );
+  }
+
+  Widget _buildStockRow() {
+    final color = sustrato.agotado ? AppDesign.accentError : 
+                  sustrato.stockBajo ? AppDesign.accentWarning : 
+                  AppDesign.gray700;
+    final bgColor = sustrato.agotado ? AppDesign.accentError.withAlpha(20) : 
+                    sustrato.stockBajo ? AppDesign.accentWarning.withAlpha(20) : 
+                    AppDesign.gray50;
+    final statusText = sustrato.agotado ? 'Agotado' : 
+                       sustrato.stockBajo ? 'Bajo stock' : 
+                       'Disponible';
+
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.space16),
+      decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(AppDesign.radiusMedium)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+        children: [
+          Row(
+            children: [
+              Icon(Icons.inventory_2_outlined, size: 18, color: color),
+              const Gap(8),
+              Text('Stock', style: AppDesign.footnote),
+            ],
+          ),
+          Row(
+            children: [
+              Text('${sustrato.cantidad} uds', style: AppDesign.bodyBold.copyWith(color: color)),
+              const Gap(8),
+              Text('• $statusText', style: AppDesign.footnote.copyWith(color: color)),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

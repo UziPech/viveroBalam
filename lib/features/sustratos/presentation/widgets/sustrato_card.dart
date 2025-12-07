@@ -51,15 +51,37 @@ class SustratoCard extends StatelessWidget {
                       Text(sustrato.nombre, style: AppDesign.bodyBold, maxLines: 1, overflow: TextOverflow.ellipsis),
                       const Gap(AppDesign.space4),
                       Text(sustrato.categoria, style: AppDesign.footnote),
-                      const Gap(AppDesign.space8),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: AppDesign.space8, vertical: AppDesign.space4),
-                            decoration: BoxDecoration(color: AppDesign.gray50, borderRadius: BorderRadius.circular(AppDesign.space8)),
-                            child: Text('${sustrato.stockEmoji} ${sustrato.cantidad}', style: AppDesign.footnote.copyWith(fontSize: 12)),
-                          ),
-                        ],
+                      // Stock indicator
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: AppDesign.space8, vertical: AppDesign.space4),
+                        decoration: BoxDecoration(
+                          color: sustrato.agotado ? AppDesign.accentError.withAlpha(20) : 
+                                 sustrato.stockBajo ? AppDesign.accentWarning.withAlpha(20) : 
+                                 AppDesign.gray50,
+                          borderRadius: BorderRadius.circular(AppDesign.space8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.inventory_2_outlined,
+                              size: 14,
+                              color: sustrato.agotado ? AppDesign.accentError : 
+                                     sustrato.stockBajo ? AppDesign.accentWarning : 
+                                     AppDesign.gray500,
+                            ),
+                            const Gap(4),
+                            Text(
+                              '${sustrato.cantidad}',
+                              style: AppDesign.footnote.copyWith(
+                                fontSize: 12,
+                                color: sustrato.agotado ? AppDesign.accentError : 
+                                       sustrato.stockBajo ? AppDesign.accentWarning : 
+                                       AppDesign.gray700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

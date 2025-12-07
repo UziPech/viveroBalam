@@ -95,7 +95,11 @@ class _PlantasScreenState extends ConsumerState<PlantasScreen>
           ],
         ),
       ),
-      floatingActionButton: _buildFAB(),
+      // Solo mostrar FAB cuando hay plantas
+      floatingActionButton: plantasAsync.maybeWhen(
+        data: (plantas) => plantas.isNotEmpty ? _buildFAB() : null,
+        orElse: () => null,
+      ),
     );
   }
 

@@ -53,17 +53,7 @@ class Sustrato extends HiveObject {
     this.createdAt = createdAt ?? DateTime.now();
   }
 
-  /// Emoji de stock según cantidad
-  String get stockEmoji {
-    if (cantidad <= 0) return '❌';
-    if (cantidad < 5) return '⚠️';
-    return '✅';
-  }
-
-  /// Texto de stock
-  String get stockTexto {
-    if (cantidad <= 0) return 'Agotado';
-    if (cantidad < 5) return 'Bajo stock';
-    return 'Disponible';
-  }
+  /// Estado de stock
+  bool get stockBajo => cantidad < 5;
+  bool get agotado => cantidad <= 0;
 }
