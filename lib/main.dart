@@ -4,6 +4,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/plantas/domain/entities/planta.dart';
+import 'features/artesanias/domain/entities/artesania.dart';
+import 'features/sustratos/domain/entities/sustrato.dart';
+import 'features/categorias/domain/entities/categoria.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,7 +14,7 @@ void main() async {
   // Inicializar Hive
   await Hive.initFlutter();
 
-  // Registrar adaptadores de Planta
+  // Registrar adaptadores - Plantas
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(PlantaAdapter());
   }
@@ -22,8 +25,26 @@ void main() async {
     Hive.registerAdapter(FrecuenciaRiegoAdapter());
   }
 
-  // Abrir la caja de plantas
+  // Registrar adaptadores - Artesanías
+  if (!Hive.isAdapterRegistered(3)) {
+    Hive.registerAdapter(ArtesaniaAdapter());
+  }
+
+  // Registrar adaptadores - Sustratos
+  if (!Hive.isAdapterRegistered(4)) {
+    Hive.registerAdapter(SustratoAdapter());
+  }
+
+  // Registrar adaptadores - Categorías
+  if (!Hive.isAdapterRegistered(5)) {
+    Hive.registerAdapter(CategoriaAdapter());
+  }
+
+  // Abrir cajas
   await Hive.openBox<Planta>('plantas');
+  await Hive.openBox<Artesania>('artesanias');
+  await Hive.openBox<Sustrato>('sustratos');
+  await Hive.openBox<Categoria>('categorias');
 
   runApp(const ProviderScope(child: ViveroApp()));
 }
@@ -36,8 +57,9 @@ class ViveroApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
-      title: 'Vivero de Plantas',
+      title: 'Vivero Balam',
       theme: AppTheme.light,
     );
   }
 }
+
