@@ -62,13 +62,12 @@ class _PlantasScreenState extends ConsumerState<PlantasScreen>
             // ========== HEADER ==========
             Padding(
               padding: const EdgeInsets.all(AppDesign.screenPadding),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Título (se oculta cuando el buscador está expandido)
-                  Expanded(
-                    child: Column(
+              child: SizedBox(
+                height: 60,
+                child: Stack(
+                  children: [
+                    // Título
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text("🌿 Catálogo", style: AppDesign.title1),
@@ -79,16 +78,20 @@ class _PlantasScreenState extends ConsumerState<PlantasScreen>
                         ),
                       ],
                     ),
-                  ),
-                  // Buscador animado
-                  AnimatedSearchBar(
-                    onSearch: (query) {
-                      setState(() => _searchQuery = query);
-                    },
-                    hintText: 'Buscar planta...',
-                    expandedWidth: MediaQuery.of(context).size.width - 40,
-                  ),
-                ],
+                    // Buscador animado (se posiciona a la derecha)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: AnimatedSearchBar(
+                        onSearch: (query) {
+                          setState(() => _searchQuery = query);
+                        },
+                        hintText: 'Buscar planta...',
+                        expandedWidth: MediaQuery.of(context).size.width - 40,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
